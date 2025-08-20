@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nana's Resume Builder - Professional PDF Generator</title>
+    
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            min-height: 400px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 10px 10px 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .preview-section {
+            grid-column: span 2;
+        }
+        
+        .resume-preview {
+            background: white;
+            padding: 60px;
+            min-height: 800px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #2C3E50;
+        }
+        
+        .resume-name {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #2C3E50;
+        }
+        
+        .resume-contact {
+            text-align: center;
+            font-size: 12px;
+            color: #34495E;
+            margin-bottom: 8px;
+        }
+        
+        .resume-title {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2C3E50;
+            margin-bottom: 20px;
+        }
+        
+        .resume-section-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2C3E50;
+            border-bottom: 2px solid #3498DB;
+            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .resume-summary {
+            text-align: justify;
+            margin-bottom: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        
+        .resume-skills {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+        
+        .resume-experience {
+            margin-bottom: 20px;
+        }
+        
+        .resume-company-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        
+        .resume-company {
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .resume-dates {
+            font-size: 11px;
+            color: #7F8C8D;
+        }
+        
+        .resume-jobtitle {
+            font-style: italic;
+            font-size: 12px;
+            color: #34495E;
+            margin-bottom: 8px;
+        }
+        
+        .resume-bullet {
+            margin-left: 20px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        
+        .resume-education {
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .header, .form-group, .btn, .section:not(.preview-section) {
+                display: none;
+            }
+            
+            .resume-preview {
+                padding: 40px;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Nana's Professional Resume PDF Generator</h1>
+            <p>Create ATS-friendly, beautifully formatted PDF resumes</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <h2>📝 Paste Your Resume</h2>
+                <div class="form-group">
+                    <label>Resume Text (from the optimizer)</label>
+                    <textarea id="resumeInput" placeholder="Paste your keyword-optimized resume text here...">Ji Myung Nana Sheppard
+917.513.6060 | nobermann@gmail.com | New Jersey | LinkedIn
+
+Vice President, DUALS Strategic Initiatives Candidate | SVP, Director Integrated Delivery | Operations Excellence Leader
+
+PROFESSIONAL SUMMARY
+Highly accomplished executive with 20+ years driving strategic initiatives and operational excellence in complex organizational environments. Proven track record of translating enterprise-wide strategies into actionable implementation plans, leading cross-functional teams, and delivering measurable business outcomes. Expert in change management, digital transformation, and scalable solution deployment across healthcare and diverse industry sectors.
+
+CORE COMPETENCIES
+• Strategic Planning & Execution
+• Change Management
+• Healthcare Transformation
+• Cross-functional Leadership
+• Operations Excellence
+• P&L Management ($70M+)
+• Digital Transformation
+• Stakeholder Engagement
+• Program Management
+• Process Optimization
+• Team Development (30+)
+• Agile & Waterfall
+
+PROFESSIONAL EXPERIENCE
+
+TBWA WH, NEW YORK, NY                                                2023 – Present
+SVP, Director of Integrated Delivery/Project + Program Management
+• Lead enterprise-wide strategic initiatives across $70M portfolio, ensuring alignment with organizational objectives
+• Drive operational transformation and change management initiatives for department of 30+ project managers
+• Partner with executive leadership to identify and monitor strategic priorities aligned with core differentiators
+• Design and implement scalable frameworks for cross-functional execution and governance structures
+• Optimize program performance through comprehensive KPI tracking, budget management, and resource allocation
+• Champion digital transformation and AI adoption across project management operations
+
+ACCENTURE, NEW YORK, NY                                              2020 – 2023
+Marketing and Communications Brand Delivery Lead
+• Managed strategic change initiatives across Healthcare, Financial Services, and Technology sectors
+• Led cross-functional transformation programs impacting multiple markets and business units
+• Developed scalable operational frameworks and best practices for enterprise-wide implementation
+• Mentored and developed team of 8-12 project managers while managing P&L across portfolio
+• Drove measurable improvements in operational efficiency and stakeholder satisfaction
+• Promoted from NY Brand Delivery Lead to NA and Canada Brand Delivery Lead
+
+EDUCATION
+MFA, Literature, Fiction, Writing | City University of New York-Brooklyn College
+B.A., Literature and Creative Writing | Binghamton University</textarea>
+                </div>
+                <button class="btn" onclick="formatResume()">🎨 Format Resume</button>
+                <button class="btn btn-success" onclick="generatePDF()">📄 Generate PDF</button>
+                <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear</button>
+            </div>
+            
+            <div class="section">
+                <h2>⚙️ PDF Settings</h2>
+                <div class="form-group">
+                    <label>Font Style</label>
+                    <select id="fontStyle" style="width: 100%; padding: 10px; border-radius: 8px;">
+                        <option value="times">Times New Roman (Classic)</option>
+                        <option value="helvetica" selected>Helvetica (Modern)</option>
+                        <option value="courier">Courier (Technical)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Page Margins</label>
+                    <select id="margins" style="width: 100%; padding: 10px; border-radius: 8px;">
+                        <option value="normal" selected>Normal (0.75 inch)</option>
+                        <option value="narrow">Narrow (0.5 inch)</option>
+                        <option value="wide">Wide (1 inch)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Color Scheme</label>
+                    <select id="colorScheme" style="width: 100%; padding: 10px; border-radius: 8px;">
+                        <option value="professional" selected>Professional Blue</option>
+                        <option value="classic">Classic Black</option>
+                        <option value="modern">Modern Gray</option>
+                    </select>
+                </div>
+                <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                    <h4 style="color: #0066cc; margin-bottom: 10px;">✅ ATS-Friendly Features</h4>
+                    <ul style="margin-left: 20px; color: #333;">
+                        <li>Clean, readable fonts</li>
+                        <li>Standard section headers</li>
+                        <li>No graphics or images</li>
+                        <li>Consistent formatting</li>
+                        <li>Optimized margins</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section preview-section">
+                <h2>👁️ Resume Preview</h2>
+                <div id="resumePreview" class="resume-preview">
+                    <div class="resume-name">Ji Myung Nana Sheppard</div>
+                    <div class="resume-contact">917.513.6060 • nobermann@gmail.com • New Jersey • LinkedIn</div>
+                    <div class="resume-title">Vice President, DUALS Strategic Initiatives Candidate</div>
+                    
+                    <div class="resume-section-header">PROFESSIONAL SUMMARY</div>
+                    <div class="resume-summary">
+                        Highly accomplished executive with 20+ years driving strategic initiatives and operational excellence in complex organizational environments. Proven track record of translating enterprise-wide strategies into actionable implementation plans, leading cross-functional teams, and delivering measurable business outcomes.
+                    </div>
+                    
+                    <div class="resume-section-header">CORE COMPETENCIES</div>
+                    <div class="resume-skills">
+                        <div>• Strategic Planning</div>
+                        <div>• Change Management</div>
+                        <div>• Healthcare Transformation</div>
+                        <div>• Cross-functional Leadership</div>
+                        <div>• Operations Excellence</div>
+                        <div>• P&L Management ($70M+)</div>
+                    </div>
+                    
+                    <div class="resume-section-header">PROFESSIONAL EXPERIENCE</div>
+                    <div class="resume-experience">
+                        <div class="resume-company-line">
+                            <span class="resume-company">TBWA WH, NEW YORK, NY</span>
+                            <span class="resume-dates">2023 – Present</span>
+                        </div>
+                        <div class="resume-jobtitle">SVP, Director of Integrated Delivery/Project + Program Management</div>
+                        <div class="resume-bullet">• Lead enterprise-wide strategic initiatives across $70M portfolio</div>
+                        <div class="resume-bullet">• Drive operational transformation for 30+ project managers</div>
+                    </div>
+                    
+                    <div class="resume-section-header">EDUCATION</div>
+                    <div class="resume-education"><strong>MFA, Literature</strong> | City University of New York</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function formatResume() {
+            const resumeText = document.getElementById('resumeInput').value;
+            const preview = document.getElementById('resumePreview');
+            
+            if (!resumeText.trim()) {
+                alert('Please paste your resume text first');
+                return;
+            }
+            
+            // Parse and format the resume
+            const formatted = parseAndFormatResume(resumeText);
+            preview.innerHTML = formatted;
+        }
+        
+        function parseAndFormatResume(text) {
+            const lines = text.split('\n').map(line => line.trim());
+            let html = '';
+            let currentSection = '';
+            let inExperience = false;
+            let bulletPoints = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                if (!line) continue;
+                
+                // Name (first line)
+                if (i === 0) {
+                    html += `<div class="resume-name">${line}</div>`;
+                }
+                // Contact (second line)
+                else if (i === 1) {
+                    const formatted = line.replace(/\|/g, '•');
+                    html += `<div class="resume-contact">${formatted}</div>`;
+                }
+                // Title line
+                else if (i === 2 && line.includes('Candidate')) {
+                    html += `<div class="resume-title">${line}</div>`;
+                }
+                // Section headers
+                else if (line === 'PROFESSIONAL SUMMARY') {
+                    currentSection = 'summary';
+                    html += `<div class="resume-section-header">${line}</div>`;
+                }
+                else if (line === 'CORE COMPETENCIES') {
+                    currentSection = 'skills';
+                    html += `<div class="resume-section-header">${line}</div>`;
+                    html += '<div class="resume-skills">';
+                }
+                else if (line === 'PROFESSIONAL EXPERIENCE') {
+                    if (currentSection === 'skills') {
+                        html += '</div>';
+                    }
+                    currentSection = 'experience';
+                    html += `<div class="resume-section-header">${line}</div>`;
+                }
+                else if (line === 'EDUCATION') {
+                    currentSection = 'education';
+                    html += `<div class="resume-section-header">${line}</div>`;
+                }
+                // Content based on section
+                else if (currentSection === 'summary') {
+                    html += `<div class="resume-summary">${line}</div>`;
+                }
+                else if (currentSection === 'skills') {
+                    if (line.startsWith('•')) {
+                        html += `<div>${line}</div>`;
+                    }
+                }
+                else if (currentSection === 'experience') {
+                    // Company line with dates
+                    if (line.includes('2020') || line.includes('2021') || line.includes('2022') || line.includes('2023') || line.includes('2024')) {
+                        const parts = line.split(/\s{2,}/);
+                        if (parts.length > 1) {
+                            html += '<div class="resume-experience">';
+                            html += '<div class="resume-company-line">';
+                            html += `<span class="resume-company">${parts[0]}</span>`;
+                            html += `<span class="resume-dates">${parts[parts.length - 1]}</span>`;
+                            html += '</div>';
+                            inExperience = true;
+                        }
+                    }
+                    // Job title
+                    else if (inExperience && !line.startsWith('•')) {
+                        html += `<div class="resume-jobtitle">${line}</div>`;
+                    }
+                    // Bullet points
+                    else if (line.startsWith('•')) {
+                        html += `<div class="resume-bullet">${line}</div>`;
+                    }
+                }
+                else if (currentSection === 'education') {
+                    const parts = line.split('|');
+                    if (parts.length > 1) {
+                        html += `<div class="resume-education"><strong>${parts[0].trim()}</strong> | ${parts[1].trim()}</div>`;
+                    } else {
+                        html += `<div class="resume-education">${line}</div>`;
+                    }
+                }
+            }
+            
+            if (currentSection === 'skills') {
+                html += '</div>';
+            }
+            if (inExperience) {
+                html += '</div>';
+            }
+            
+            return html;
+        }
+        
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt',
+                format: 'letter'
+            });
+            
+            const resumeText = document.getElementById('resumeInput').value;
+            const fontStyle = document.getElementById('fontStyle').value;
+            const margins = document.getElementById('margins').value;
+            const colorScheme = document.getElementById('colorScheme').value;
+            
+            if (!resumeText.trim()) {
+                alert('Please paste your resume text first');
+                return;
+            }
+            
+            // Set margins based on selection
+            let margin = 54; // 0.75 inch default
+            if (margins === 'narrow') margin = 36; // 0.5 inch
+            if (margins === 'wide') margin = 72; // 1 inch
+            
+            // Set colors based on scheme
+            let headerColor = [44, 62, 80]; // Professional blue
+            let accentColor = [52, 152, 219];
+            if (colorScheme === 'classic') {
+                headerColor = [0, 0, 0];
+                accentColor = [0, 0, 0];
+            } else if (colorScheme === 'modern') {
+                headerColor = [52, 73, 94];
+                accentColor = [127, 140, 141];
+            }
+            
+            // Set font
+            const fonts = {
+                'times': 'times',
+                'helvetica': 'helvetica',
+                'courier': 'courier'
+            };
+            doc.setFont(fonts[fontStyle] || 'helvetica');
+            
+            // Parse resume
+            const lines = resumeText.split('\n').map(line => line.trim());
+            let y = margin;
+            
+            // Helper function to add text
+            const addText = (text, size, style = 'normal', align = 'left') => {
+                doc.setFontSize(size);
+                doc.setFont(fonts[fontStyle] || 'helvetica', style);
+                
+                if (align === 'center') {
+                    const textWidth = doc.getTextWidth(text);
+                    const x = (doc.internal.pageSize.width - textWidth) / 2;
+                    doc.text(text, x, y);
+                } else {
+                    doc.text(text, margin, y);
+                }
+                y += size + 4;
+            };
+            
+            // Helper function to add line
+            const addLine = () => {
+                doc.setDrawColor(accentColor[0], accentColor[1], accentColor[2]);
+                doc.setLineWidth(1);
+                doc.line(margin, y, doc.internal.pageSize.width - margin, y);
+                y += 10;
+            };
+            
+            // Process resume
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                if (!line) continue;
+                
+                // Check if we need a new page
+                if (y > doc.internal.pageSize.height - margin) {
+                    doc.addPage();
+                    y = margin;
+                }
+                
+                // Name
+                if (i === 0) {
+                    doc.setTextColor(headerColor[0], headerColor[1], headerColor[2]);
+                    addText(line, 24, 'bold', 'center');
+                }
+                // Contact
+                else if (i === 1) {
+                    doc.setTextColor(100, 100, 100);
+                    const formatted = line.replace(/\|/g, '•');
+                    addText(formatted, 10, 'normal', 'center');
+                }
+                // Title
+                else if (i === 2 && line.includes('Candidate')) {
+                    doc.setTextColor(headerColor[0], headerColor[1], headerColor[2]);
+                    addText(line, 12, 'bold', 'center');
+                    y += 8;
+                    addLine();
+                }
+                // Section headers
+                else if (['PROFESSIONAL SUMMARY', 'CORE COMPETENCIES', 'PROFESSIONAL EXPERIENCE', 'EDUCATION'].includes(line)) {
+                    y += 8;
+                    doc.setTextColor(headerColor[0], headerColor[1], headerColor[2]);
+                    addText(line, 12, 'bold');
+                    y -= 8;
+                    addLine();
+                }
+                // Bullets and content
+                else if (line.startsWith('•')) {
+                    doc.setTextColor(50, 50, 50);
+                    // Handle long bullet points
+                    const maxWidth = doc.internal.pageSize.width - (margin * 2) - 20;
+                    const splitText = doc.splitTextToSize(line, maxWidth);
+                    
+                    splitText.forEach((textLine, index) => {
+                        if (index === 0) {
+                            doc.text(textLine, margin + 10, y);
+                        } else {
+                            doc.text(textLine, margin + 20, y);
+                        }
+                        y += 12;
+                    });
+                }
+                // Company lines with dates
+                else if (line.includes('2020') || line.includes('2021') || line.includes('2022') || line.includes('2023') || line.includes('2024')) {
+                    doc.setTextColor(headerColor[0], headerColor[1], headerColor[2]);
+                    doc.setFont(fonts[fontStyle] || 'helvetica', 'bold');
+                    
+                    // Split company and dates
+                    const parts = line.split(/\s{2,}/);
+                    if (parts.length > 1) {
+                        doc.text(parts[0], margin, y);
+                        doc.setTextColor(127, 140, 141);
+                        doc.setFont(fonts[fontStyle] || 'helvetica', 'normal');
+                        const dateWidth = doc.getTextWidth(parts[parts.length - 1]);
+                        doc.text(parts[parts.length - 1], doc.internal.pageSize.width - margin - dateWidth, y);
+                    } else {
+                        doc.text(line, margin, y);
+                    }
+                    y += 14;
+                }
+                // Regular text
+                else {
+                    doc.setTextColor(50, 50, 50);
+                    doc.setFont(fonts[fontStyle] || 'helvetica', 'normal');
+                    
+                    // Handle long lines
+                    const maxWidth = doc.internal.pageSize.width - (margin * 2);
+                    const splitText = doc.splitTextToSize(line, maxWidth);
+                    
+                    splitText.forEach(textLine => {
+                        doc.text(textLine, margin, y);
+                        y += 12;
+                    });
+                }
+            }
+            
+            // Save the PDF
+            const fileName = `Nana_Resume_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+            
+            alert(`✅ PDF generated successfully!\nFile saved as: ${fileName}`);
+        }
+        
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all content?')) {
+                document.getElementById('resumeInput').value = '';
+                location.reload();
+            }
+        }
+        
+        // Auto-format on load
+        window.onload = function() {
+            formatResume();
+        };
+    </script>
+</body>
+</html>

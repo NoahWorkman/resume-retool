@@ -14,6 +14,7 @@ import argparse
 from input_handler import JobPostingExtractor
 from keyword_optimizer import KeywordOptimizer
 from resume_builder import ResumeBuilder
+from pdf_generator_pro import create_professional_pdf
 
 class NanaResumeSystem:
     """
@@ -282,11 +283,16 @@ class NanaResumeSystem:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         company = results['extraction'].get('company', 'unknown').replace(' ', '_')
         
-        # Save customized resume
+        # Save customized resume as text
         resume_file = f"{output_dir}/resume_{company}_{timestamp}.txt"
         with open(resume_file, 'w') as f:
             f.write(results['customized_resume'])
         print(f"\n💾 Resume saved to: {resume_file}")
+        
+        # Generate professional PDF
+        pdf_file = f"{output_dir}/resume_{company}_{timestamp}.pdf"
+        create_professional_pdf(results['customized_resume'], pdf_file)
+        print(f"📄 PDF resume saved to: {pdf_file}")
         
         # Save analysis report
         report_file = f"{output_dir}/analysis_{company}_{timestamp}.json"
