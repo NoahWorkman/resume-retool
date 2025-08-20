@@ -493,6 +493,36 @@ Required:
                 <h2>👤 Nana's Resume Data</h2>
                 
                 <div class="form-group">
+                    <label>Number of Experiences to Include</label>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="range" id="experienceCount" min="2" max="6" value="5" 
+                               style="flex: 1; height: 6px; background: linear-gradient(to right, #667eea 0%, #764ba2 100%); border-radius: 5px; outline: none;"
+                               oninput="updateExperienceCount()">
+                        <span id="experienceCountDisplay" style="font-weight: bold; color: #667eea; font-size: 1.2em; min-width: 20px;">5</span>
+                        <span style="color: #6c757d; font-size: 0.9em;">positions</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.85em; color: #6c757d;">
+                        <span style="color: #28a745;">Recommended: 4-5 positions</span> for optimal ATS performance
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Experience Selection</label>
+                    <div id="experiencePreview" style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <div style="font-size: 0.9em; color: #495057;">
+                            <strong>Current selection will include:</strong>
+                            <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+                                <li>TBWA WH (2023-Present) - Current Role ✓</li>
+                                <li>Accenture (2020-2023) - Healthcare Experience</li>
+                                <li>Freelance (2017-2019) - Consulting Experience</li>
+                                <li>Y&R (2016-2017) - VP Leadership Role</li>
+                                <li>Publicis (2010-2013) - Digital Production</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
                     <label>Core Skills</label>
                     <div class="skills-container">
                         <span class="skill-tag">Project Management</span>
@@ -794,6 +824,10 @@ Required:
             
             // Display results
             displayKeywordAnalysis(matched, unmatched);
+            
+            // Update experience preview based on analysis
+            updateExperiencePreview(jobText, parseInt(document.getElementById('experienceCount').value));
+            
             showStatus('✅ Keyword analysis complete!', 'success');
         }
         
@@ -909,61 +943,111 @@ Required:
             showStatus('✅ Resume generated successfully!', 'success');
         }
         
-        function selectRelevantExperiences(jobText) {
+        function updateExperienceCount() {
+            const count = document.getElementById('experienceCount').value;
+            document.getElementById('experienceCountDisplay').textContent = count;
+            
+            // Update preview to show which experiences will be included
+            const jobText = document.getElementById('jobDescription').value;
+            updateExperiencePreview(jobText, parseInt(count));
+        }
+        
+        function updateExperiencePreview(jobText, maxCount) {
+            const selected = selectRelevantExperiences(jobText, maxCount);
+            const previewEl = document.getElementById('experiencePreview');
+            
+            let html = '<div style="font-size: 0.9em; color: #495057;">';
+            html += '<strong>Selected experiences based on job keywords:</strong>';
+            html += '<ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">';
+            
+            selected.forEach((exp, index) => {
+                let reason = '';
+                if (index === 0) reason = ' - Current Role ✓';
+                else if (exp.company.includes('ACCENTURE')) reason = ' - Healthcare/Enterprise';
+                else if (exp.company.includes('Y&R')) reason = ' - VP Leadership';
+                else if (exp.dates.includes('2017')) reason = ' - Consulting';
+                else if (exp.company.includes('PUBLICIS')) reason = ' - Digital Production';
+                else reason = ' - Additional Experience';
+                
+                const style = index < maxCount ? 'color: #28a745; font-weight: 500;' : 'color: #ccc; text-decoration: line-through;';
+                html += `<li style="${style}">${exp.company.split(',')[0]} (${exp.dates})${reason}</li>`;
+            });
+            
+            html += '</ul>';
+            
+            if (maxCount < 4) {
+                html += '<div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; color: #856404;">';
+                html += '⚠️ Including fewer than 4 positions may not fully showcase your experience';
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            previewEl.innerHTML = html;
+        }
+        
+        function selectRelevantExperiences(jobText, maxCount) {
             const jobLower = jobText.toLowerCase();
             const selected = [];
+            const experienceCount = maxCount || parseInt(document.getElementById('experienceCount').value) || 5;
             
-            // Always include current role
-            selected.push(nanaData.experience[0]);
-            
-            // Add Accenture if healthcare/enterprise mentioned
-            if (jobLower.includes('healthcare') || jobLower.includes('health') || 
-                jobLower.includes('enterprise') || jobLower.includes('transformation')) {
-                selected.push(nanaData.experience[1]);
-            }
-            
-            // Add VP role for executive positions
-            if (jobLower.includes('vice president') || jobLower.includes('vp') || 
-                jobLower.includes('executive') || jobLower.includes('director')) {
-                const yrRole = nanaData.experience.find(exp => exp.company.includes('Y&R'));
-                if (yrRole && !selected.includes(yrRole)) {
-                    selected.push(yrRole);
+            // Score each experience based on relevance
+            const scoredExperiences = nanaData.experience.map(exp => {
+                let score = 0;
+                
+                // Current role gets highest priority
+                if (exp.dates.includes('Present')) score += 100;
+                
+                // Score based on job keywords
+                if (jobLower.includes('healthcare') || jobLower.includes('health')) {
+                    if (exp.company.includes('ACCENTURE')) score += 50;
                 }
-            }
-            
-            // Add freelance consulting for strategic/consulting roles
-            if (jobLower.includes('consulting') || jobLower.includes('strategic') || 
-                jobLower.includes('consultant')) {
-                const freelance2017 = nanaData.experience.find(exp => 
-                    exp.company === 'FREELANCE' && exp.dates.includes('2017'));
-                if (freelance2017 && !selected.includes(freelance2017)) {
-                    selected.push(freelance2017);
+                
+                if (jobLower.includes('vice president') || jobLower.includes('vp') || 
+                    jobLower.includes('executive') || jobLower.includes('director')) {
+                    if (exp.title.includes('VP') || exp.title.includes('Director')) score += 40;
                 }
-            }
-            
-            // Add digital production experience if relevant
-            if (jobLower.includes('digital') || jobLower.includes('production') || 
-                jobLower.includes('operational')) {
-                const publicis = nanaData.experience.find(exp => exp.company.includes('PUBLICIS'));
-                if (publicis && !selected.includes(publicis)) {
-                    selected.push(publicis);
+                
+                if (jobLower.includes('consulting') || jobLower.includes('consultant')) {
+                    if (exp.title.includes('Consultant')) score += 40;
                 }
-            }
-            
-            // Fill to at least 3-4 experiences
-            if (selected.length < 3) {
-                for (let exp of nanaData.experience) {
-                    if (!selected.includes(exp)) {
-                        selected.push(exp);
-                        if (selected.length >= 4) break;
-                    }
+                
+                if (jobLower.includes('digital') || jobLower.includes('production')) {
+                    if (exp.title.includes('Digital') || exp.title.includes('Production')) score += 30;
                 }
-            }
+                
+                if (jobLower.includes('strategic') || jobLower.includes('strategy')) {
+                    if (exp.bullets.some(b => b.toLowerCase().includes('strategic'))) score += 20;
+                }
+                
+                if (jobLower.includes('transformation') || jobLower.includes('change')) {
+                    if (exp.bullets.some(b => b.toLowerCase().includes('transform') || 
+                                           b.toLowerCase().includes('change'))) score += 20;
+                }
+                
+                // Recency bonus (more recent = higher score)
+                const year = parseInt(exp.dates.match(/\d{4}/)?.[0] || 0);
+                score += (year - 2000) / 2;
+                
+                return { ...exp, score };
+            });
             
-            // Limit bullets for space (max 4-5 per role)
-            return selected.slice(0, 5).map(exp => ({
+            // Sort by score and select top N
+            scoredExperiences.sort((a, b) => b.score - a.score);
+            const topExperiences = scoredExperiences.slice(0, experienceCount);
+            
+            // Sort selected experiences chronologically (most recent first)
+            topExperiences.sort((a, b) => {
+                const aYear = parseInt(a.dates.match(/\d{4}/)?.[0] || 0);
+                const bYear = parseInt(b.dates.match(/\d{4}/)?.[0] || 0);
+                return bYear - aYear;
+            });
+            
+            // Limit bullets for space (3-4 per role depending on total count)
+            const bulletsPerRole = experienceCount <= 3 ? 5 : experienceCount <= 4 ? 4 : 3;
+            
+            return topExperiences.map(exp => ({
                 ...exp,
-                bullets: exp.bullets.slice(0, 4)
+                bullets: exp.bullets.slice(0, bulletsPerRole)
             }));
         }
         
