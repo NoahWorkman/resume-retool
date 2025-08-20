@@ -85,6 +85,51 @@ class NanaResumeSystem:
                         "Led PM Department leadership and growth along with managing P&L across all projects",
                         "Promoted from NY Brand Delivery Lead to NA and Canada Brand Delivery Lead"
                     ]
+                },
+                {
+                    "company": "FREELANCE",
+                    "dates": "2017 – 2019",
+                    "title": "Executive Producer/PMO Consultant",
+                    "bullets": [
+                        "Took charge of project portfolio management, initialized project management processes, and implemented project management tools and methods",
+                        "Led complex projects from initiation through deployment including user adoption and change management",
+                        "Worked through complex, multi-functional issues, led technical teams towards innovative and advanced solutions",
+                        "Clients included: Global VW Pitch (Won), Walmart CX Transformation, Pepperidge Farm, Proactive, Merck Content Hub, Cigna, Honeywell Pitch"
+                    ]
+                },
+                {
+                    "company": "Y&R NY",
+                    "dates": "2016 – 2017",
+                    "title": "VP, Director of Project Management and Digital Operations",
+                    "bullets": [
+                        "Built, grew, and led the PM Department of 10 Project Managers",
+                        "Oversaw entire P&L across projects, resource allocations, scope change/creep",
+                        "Performed workflow and gap analysis to improve, modernize, and digitize production work streams",
+                        "Managed and assessed program performance by tracking activities, goals, targets, KPIs, and budgets",
+                        "Identified process improvements, innovative solutions, and new tools for broader team capacity"
+                    ]
+                },
+                {
+                    "company": "FREELANCE",
+                    "dates": "2013 – 2016",
+                    "title": "Executive Producer",
+                    "bullets": [
+                        "Produced audience-first, engaging storytelling through digital articles, videos, social media, push alerts, live streams",
+                        "Clients: Ogilvy (UPS, Siemens), Atmosphere BBDO (Dubai Tourism), Havas Group (IBM), RAPP (NBCU, J&J, Pfizer)",
+                        "Clients: Ogilvy (eTrade, Citizens Bank), Geometry/G2 (Campbell's Soup/Pepperidge Farm)"
+                    ]
+                },
+                {
+                    "company": "PUBLICIS KAPLAN THALER",
+                    "dates": "2010 – 2013",
+                    "title": "Head of Digital Production",
+                    "bullets": [
+                        "Oversaw business of approx. $15-$20 million and scheduling, change management, and delivery processes",
+                        "Managed projects across 14 accounts including over 30 active projects for Wendy's, Merck, P&G, Napa, Champion",
+                        "Hired, supervised, trained, and managed a team of 5-7 digital producers",
+                        "Established and led the first Digital PM/Production Department for Kaplan Thaler Group",
+                        "Awards: 2 Webbys, 4 IACs, and 1 Golden Tweet Award"
+                    ]
                 }
             ],
             "education": [
@@ -95,6 +140,10 @@ class NanaResumeSystem:
                 {
                     "degree": "B.A. Degree, Literature and Creative Writing",
                     "school": "Binghamton University"
+                },
+                {
+                    "degree": "B.A. Degree, German; German Philology and Literature",
+                    "school": "University of Göttingen"
                 }
             ]
         }
@@ -182,13 +231,16 @@ class NanaResumeSystem:
         # Professional experience with keyword optimization
         resume_text += "PROFESSIONAL EXPERIENCE\n\n"
         
-        for exp in self.nana_base_data['experience'][:2]:  # Focus on recent experience
+        # Select most relevant experiences based on job requirements
+        relevant_experiences = self._select_relevant_experiences(keyword_report)
+        
+        for exp in relevant_experiences:
             resume_text += f"{exp['company']:<50} {exp['dates']:>20}\n"
             resume_text += f"{exp['title']}\n"
             
             # Optimize bullets based on keywords
             optimized_bullets = self._optimize_bullets(exp['bullets'], keyword_report)
-            for bullet in optimized_bullets:
+            for bullet in optimized_bullets[:5]:  # Limit bullets for space
                 resume_text += f"• {bullet}\n"
             resume_text += "\n"
         
@@ -198,6 +250,53 @@ class NanaResumeSystem:
             resume_text += f"{edu['degree']} | {edu['school']}\n"
         
         return resume_text
+    
+    def _select_relevant_experiences(self, keyword_report: dict) -> list:
+        """Select most relevant experiences based on job requirements"""
+        all_experiences = self.nana_base_data['experience']
+        
+        # Always include current role
+        selected = [all_experiences[0]]  # TBWA
+        
+        # Check for specific keyword relevance
+        matched_keywords = {m['keyword'].lower() for m in keyword_report['matched_details']}
+        
+        # Add Accenture if healthcare/enterprise keywords present
+        if any(kw in matched_keywords for kw in ['healthcare', 'health', 'enterprise', 'transformation']):
+            selected.append(all_experiences[1])  # Accenture
+        
+        # Add leadership roles for VP/executive positions
+        if any(kw in matched_keywords for kw in ['leadership', 'executive', 'vp', 'vice president', 'director']):
+            # Add Y&R VP role
+            for exp in all_experiences:
+                if 'Y&R' in exp['company'] and exp not in selected:
+                    selected.append(exp)
+                    break
+        
+        # Add digital/production experience if relevant
+        if any(kw in matched_keywords for kw in ['digital', 'production', 'operational']):
+            # Add Publicis role
+            for exp in all_experiences:
+                if 'PUBLICIS' in exp['company'] and exp not in selected:
+                    selected.append(exp)
+                    break
+        
+        # Add freelance if we need more variety or consulting experience
+        if len(selected) < 3:
+            for exp in all_experiences:
+                if 'FREELANCE' in exp['company'] and '2017' in exp['dates']:
+                    selected.append(exp)
+                    break
+        
+        # Ensure we have at least 3-4 experiences but not more than 5
+        if len(selected) < 3:
+            for exp in all_experiences[1:5]:
+                if exp not in selected:
+                    selected.append(exp)
+                if len(selected) >= 4:
+                    break
+        
+        return selected[:5]  # Max 5 experiences for space
     
     def _optimize_summary(self, keyword_report: dict) -> str:
         """Create keyword-optimized summary"""

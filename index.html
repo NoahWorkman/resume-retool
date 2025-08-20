@@ -618,7 +618,7 @@ Required:
     </div>
     
     <script>
-        // Nana's verified experience data
+        // Nana's complete experience data
         const nanaData = {
             fullName: "Ji Myung Nana Sheppard",
             contact: "917.513.6060 | nobermann@gmail.com | New Jersey | LinkedIn",
@@ -627,6 +627,77 @@ Required:
             currentCompany: "TBWA WH",
             portfolioSize: 70000000,
             teamSize: 30,
+            
+            experience: [
+                {
+                    company: "TBWA WH, NEW YORK, NY",
+                    dates: "2023 – Present",
+                    title: "SVP, Director of Integrated Delivery/Project + Program Management",
+                    bullets: [
+                        "Lead strategic initiatives across $70M portfolio with enterprise-wide impact",
+                        "Drive operational transformation and change management for 30+ team members",
+                        "Partner with executive stakeholders to align strategic priorities",
+                        "Design scalable implementation frameworks for cross-functional execution",
+                        "Champion best practices and continuous improvement initiatives",
+                        "Operationalize AI practices within PM department and overall agency"
+                    ]
+                },
+                {
+                    company: "ACCENTURE, NEW YORK, NY",
+                    dates: "2020 – 2023",
+                    title: "Marketing and Communications Brand Delivery Lead",
+                    bullets: [
+                        "Managed strategic initiatives for healthcare and financial services clients",
+                        "Led cross-functional transformation programs across multiple markets",
+                        "Developed scalable operational frameworks and governance structures",
+                        "Mentored team of 8-12 project managers while managing P&L",
+                        "Promoted from NY to NA and Canada Brand Delivery Lead"
+                    ]
+                },
+                {
+                    company: "FREELANCE",
+                    dates: "2017 – 2019",
+                    title: "Executive Producer/PMO Consultant",
+                    bullets: [
+                        "Led project portfolio management and implemented PM tools and methods",
+                        "Managed complex projects from initiation through deployment",
+                        "Won Global VW Pitch as Executive Producer/Lead PMO for WPP",
+                        "Clients: Walmart, Pepperidge Farm, Merck, Cigna, Honeywell"
+                    ]
+                },
+                {
+                    company: "Y&R NY",
+                    dates: "2016 – 2017",
+                    title: "VP, Director of Project Management and Digital Operations",
+                    bullets: [
+                        "Built and led PM Department of 10 Project Managers",
+                        "Managed entire P&L across projects and resource allocations",
+                        "Improved and digitized production work streams across agency",
+                        "Tracked program performance through KPIs and budget management"
+                    ]
+                },
+                {
+                    company: "FREELANCE",
+                    dates: "2013 – 2016",
+                    title: "Executive Producer",
+                    bullets: [
+                        "Produced digital content for major agency clients",
+                        "Clients: Ogilvy, Atmosphere BBDO, Havas Group, RAPP, Geometry/G2",
+                        "Managed campaigns for IBM, UPS, Siemens, J&J, Pfizer"
+                    ]
+                },
+                {
+                    company: "PUBLICIS KAPLAN THALER",
+                    dates: "2010 – 2013",
+                    title: "Head of Digital Production",
+                    bullets: [
+                        "Oversaw $15-20M business and delivery processes",
+                        "Managed 30+ projects across 14 accounts including Wendy's, Merck, P&G",
+                        "Established first Digital PM/Production Department",
+                        "Won 2 Webbys, 4 IACs, and 1 Golden Tweet Award"
+                    ]
+                }
+            ],
             
             verifiedSkills: [
                 "Project & Program Management",
@@ -817,20 +888,18 @@ Required:
             });
             
             resume += `\nPROFESSIONAL EXPERIENCE\n\n`;
-            resume += `TBWA WH, NEW YORK, NY                                                2023 – Present\n`;
-            resume += `SVP, Director of Integrated Delivery/Project + Program Management\n`;
-            resume += `• Lead strategic initiatives across $70M portfolio with enterprise-wide impact\n`;
-            resume += `• Drive operational transformation and change management for 30+ team members\n`;
-            resume += `• Partner with executive stakeholders to align strategic priorities\n`;
-            resume += `• Design scalable implementation frameworks for cross-functional execution\n`;
-            resume += `• Champion best practices and continuous improvement initiatives\n\n`;
             
-            resume += `ACCENTURE, NEW YORK, NY                                              2020 – 2023\n`;
-            resume += `Marketing and Communications Brand Delivery Lead\n`;
-            resume += `• Managed strategic initiatives for healthcare and financial services clients\n`;
-            resume += `• Led cross-functional transformation programs across multiple markets\n`;
-            resume += `• Developed scalable operational frameworks and governance structures\n`;
-            resume += `• Drove measurable improvements in efficiency and stakeholder alignment\n\n`;
+            // Include relevant experiences based on job
+            const experiences = selectRelevantExperiences(jobDescription);
+            
+            experiences.forEach(exp => {
+                resume += `${exp.company}                                                ${exp.dates}\n`;
+                resume += `${exp.title}\n`;
+                exp.bullets.forEach(bullet => {
+                    resume += `• ${bullet}\n`;
+                });
+                resume += `\n`;
+            });
             
             resume += `EDUCATION\n`;
             resume += `MFA, Literature, Fiction, Writing | City University of New York-Brooklyn College\n`;
@@ -838,6 +907,64 @@ Required:
             
             document.getElementById('resumePreview').textContent = resume;
             showStatus('✅ Resume generated successfully!', 'success');
+        }
+        
+        function selectRelevantExperiences(jobText) {
+            const jobLower = jobText.toLowerCase();
+            const selected = [];
+            
+            // Always include current role
+            selected.push(nanaData.experience[0]);
+            
+            // Add Accenture if healthcare/enterprise mentioned
+            if (jobLower.includes('healthcare') || jobLower.includes('health') || 
+                jobLower.includes('enterprise') || jobLower.includes('transformation')) {
+                selected.push(nanaData.experience[1]);
+            }
+            
+            // Add VP role for executive positions
+            if (jobLower.includes('vice president') || jobLower.includes('vp') || 
+                jobLower.includes('executive') || jobLower.includes('director')) {
+                const yrRole = nanaData.experience.find(exp => exp.company.includes('Y&R'));
+                if (yrRole && !selected.includes(yrRole)) {
+                    selected.push(yrRole);
+                }
+            }
+            
+            // Add freelance consulting for strategic/consulting roles
+            if (jobLower.includes('consulting') || jobLower.includes('strategic') || 
+                jobLower.includes('consultant')) {
+                const freelance2017 = nanaData.experience.find(exp => 
+                    exp.company === 'FREELANCE' && exp.dates.includes('2017'));
+                if (freelance2017 && !selected.includes(freelance2017)) {
+                    selected.push(freelance2017);
+                }
+            }
+            
+            // Add digital production experience if relevant
+            if (jobLower.includes('digital') || jobLower.includes('production') || 
+                jobLower.includes('operational')) {
+                const publicis = nanaData.experience.find(exp => exp.company.includes('PUBLICIS'));
+                if (publicis && !selected.includes(publicis)) {
+                    selected.push(publicis);
+                }
+            }
+            
+            // Fill to at least 3-4 experiences
+            if (selected.length < 3) {
+                for (let exp of nanaData.experience) {
+                    if (!selected.includes(exp)) {
+                        selected.push(exp);
+                        if (selected.length >= 4) break;
+                    }
+                }
+            }
+            
+            // Limit bullets for space (max 4-5 per role)
+            return selected.slice(0, 5).map(exp => ({
+                ...exp,
+                bullets: exp.bullets.slice(0, 4)
+            }));
         }
         
         function prioritizeSkills(jobText) {
