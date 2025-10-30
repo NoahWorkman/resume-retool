@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nana's Resume Builder - 100% Factual Keyword Optimization</title>
+    <title>Resume Retool - 100% Factual Keyword Optimization</title>
     
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -427,7 +427,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Nana's Resume Builder</h1>
+            <h1>🎯 Resume Retool</h1>
             <p>AI-Powered Resume Customization with 100% Factual Accuracy</p>
         </div>
         
@@ -490,7 +490,7 @@ Required:
             
             <!-- Resume Data Section -->
             <div class="section">
-                <h2>👤 Nana's Resume Data</h2>
+                <h2>👤 Your Resume Data</h2>
                 
                 <div class="form-group">
                     <label>Number of Experiences to Include</label>
@@ -648,11 +648,11 @@ Required:
     </div>
     
     <script>
-        // Nana's complete experience data
-        const nanaData = {
-            fullName: "Ji Myung Nana Sheppard",
-            contact: "917.513.6060 | nobermann@gmail.com | New Jersey | LinkedIn",
-            title: "SVP, Director Integrated Delivery | Best Practices & Change Agent | Operations Guru",
+        // Sample experience data (replace with your own)
+        const userData = {
+            fullName: "Your Name",
+            contact: "your.email@example.com | Your Location | LinkedIn",
+            title: "Your Professional Title | Your Specialty",
             yearsExp: 20,
             currentCompany: "TBWA WH",
             portfolioSize: 70000000,
@@ -851,15 +851,15 @@ Required:
         }
         
         function canClaimKeyword(keyword) {
-            // Check if keyword matches Nana's experience
-            if (nanaData.forbiddenKeywords.some(forbidden => keyword.includes(forbidden))) {
+            // Check if keyword matches user's experience
+            if (userData.forbiddenKeywords.some(forbidden => keyword.includes(forbidden))) {
                 return false;
             }
-            
+
             // Check if keyword relates to verified experience
             const allVerified = [
-                ...nanaData.verifiedSkills,
-                ...Object.values(nanaData.verifiedDomains).flat()
+                ...userData.verifiedSkills,
+                ...Object.values(userData.verifiedDomains).flat()
             ].map(s => s.toLowerCase());
             
             return allVerified.some(verified => 
@@ -907,11 +907,11 @@ Required:
             const jobDescription = document.getElementById('jobDescription').value;
             
             // Build customized resume
-            let resume = `${nanaData.fullName}\n${nanaData.contact}\n\n`;
-            resume += `${position} Candidate | ${nanaData.title}\n\n`;
-            
+            let resume = `${userData.fullName}\n${userData.contact}\n\n`;
+            resume += `${position} Candidate | ${userData.title}\n\n`;
+
             resume += `PROFESSIONAL SUMMARY\n`;
-            resume += `Highly accomplished executive with ${nanaData.yearsExp}+ years driving strategic initiatives and operational excellence. `;
+            resume += `Highly accomplished executive with ${userData.yearsExp}+ years driving strategic initiatives and operational excellence. `;
             resume += `Proven track record leading enterprise-wide transformations, managing cross-functional teams, and delivering measurable outcomes. `;
             resume += `Expert in change management, strategic planning, and scalable solution deployment.\n\n`;
             
@@ -989,9 +989,9 @@ Required:
             const jobLower = jobText.toLowerCase();
             const selected = [];
             const experienceCount = maxCount || parseInt(document.getElementById('experienceCount').value) || 5;
-            
+
             // Score each experience based on relevance
-            const scoredExperiences = nanaData.experience.map(exp => {
+            const scoredExperiences = userData.experience.map(exp => {
                 let score = 0;
                 
                 // Current role gets highest priority
@@ -1053,7 +1053,7 @@ Required:
         
         function prioritizeSkills(jobText) {
             const jobLower = jobText.toLowerCase();
-            const skills = [...nanaData.verifiedSkills];
+            const skills = [...userData.verifiedSkills];
             
             // Prioritize skills mentioned in job
             skills.sort((a, b) => {
@@ -1381,7 +1381,7 @@ Required:
         
         // Initialize
         window.onload = function() {
-            console.log('Nana\'s Resume Builder loaded successfully');
+            console.log('Resume Retool loaded successfully');
         };
     </script>
 </body>

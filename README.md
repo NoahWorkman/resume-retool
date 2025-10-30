@@ -1,4 +1,4 @@
-# Nana's Resume Builder 🎯
+# Resume Retool 🎯
 
 AI-powered resume customization tool that tailors resumes to job descriptions while maintaining 100% factual accuracy.
 
@@ -26,8 +26,8 @@ This tool **NEVER** adds experience, skills, or qualifications you don't have. I
 
 ```bash
 # Clone the repository
-git clone https://github.com/NoahWorkman/nana-resume-builder.git
-cd nana-resume-builder
+git clone https://github.com/NoahWorkman/resume-retool.git
+cd resume-retool
 
 # Install dependencies
 pip install -r requirements.txt
@@ -67,7 +67,7 @@ The tool generates:
 ## 📁 Project Structure
 
 ```
-nana-resume-builder/
+resume-retool/
 ├── main.py              # Main application entry point
 ├── input_handler.py     # Handles screenshots, URLs, PDFs
 ├── keyword_optimizer.py # Keyword matching engine
@@ -105,9 +105,9 @@ Job Posting → Extract Keywords → Match to Experience → Rewrite (Never Add)
 
 **Job Requires**: "Healthcare strategic planning experience"
 
-**Nana Has**: "Strategic planning at Accenture with healthcare clients"
+**User Has**: "Strategic planning at consulting firm with healthcare clients"
 
-**Output**: "Led strategic planning initiatives for healthcare sector clients at Accenture"
+**Output**: "Led strategic planning initiatives for healthcare sector clients at consulting firm"
 
 **NOT**: "10 years dedicated healthcare strategic planning" (would be false)
 
@@ -118,12 +118,12 @@ Job Posting → Extract Keywords → Match to Experience → Rewrite (Never Add)
 ==================================================
 
 ✅ Keywords Successfully Matched:
-   • strategic planning → Highlight enterprise strategy work at TBWA
+   • strategic planning → Highlight enterprise strategy work
    • change management → Direct experience
-   • cross-functional → Managing 30+ PMs across disciplines
+   • cross-functional → Managing team across disciplines
 
 💡 Optimization Suggestions:
-   • For 'healthcare': Emphasize Accenture healthcare client work
+   • For 'healthcare': Emphasize healthcare client work
 
 ⚠️  Cannot Add (No Experience):
    • Clinical operations: No direct clinical experience
@@ -148,12 +148,12 @@ Perfect for:
 
 ## 🤝 Contributing
 
-This is a private repository for Nana's use. For questions or improvements, please contact Noah.
+This is an open-source tool for resume optimization. For questions or improvements, please contact Noah.
 
 ## 📝 License
 
-Private repository - All rights reserved
+MIT License - Free to use and modify
 
 ---
 
-Built with ❤️ for Nana's job search success!
+Built with ❤️ for job seekers everywhere!

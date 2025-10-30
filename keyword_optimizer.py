@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Keyword Optimization Engine for Nana's Resume Builder
+Keyword Optimization Engine for Resume Retool
 This module ensures 100% factual accuracy while maximizing keyword matches
 """
 
@@ -24,17 +24,17 @@ class KeywordOptimizer:
     """
     Core engine that:
     1. Extracts keywords from job postings
-    2. Matches them to Nana's actual experience
-    3. NEVER adds experience she doesn't have
+    2. Matches them to user's actual experience
+    3. NEVER adds experience they don't have
     4. Rewrites existing experience to include matched keywords
     """
-    
-    def __init__(self, nana_resume_data: Dict):
-        """Initialize with Nana's base resume data"""
-        self.nana_data = nana_resume_data
+
+    def __init__(self, user_resume_data: Dict):
+        """Initialize with user's base resume data"""
+        self.user_data = user_resume_data
         self.experience_keywords = self._extract_resume_keywords()
-        
-        # Nana's actual experience domains (NEVER fabricate outside these)
+
+        # User's actual experience domains (NEVER fabricate outside these)
         self.verified_domains = {
             'project_management': [
                 'project management', 'program management', 'PMO', 'portfolio management',
@@ -63,26 +63,26 @@ class KeywordOptimizer:
             ]
         }
         
-        # Keywords Nana can NEVER claim (no experience)
+        # Keywords user can NEVER claim (no experience)
         self.forbidden_keywords = {
             'direct_clinical': ['physician', 'nurse', 'clinical practice', 'patient care'],
             'technical_deep': ['software engineering', 'coding', 'programming', 'developer'],
             'specific_certs': ['PMP', 'Six Sigma', 'ITIL', 'Scrum Master'] # unless verified
         }
-    
+
     def _extract_resume_keywords(self) -> Set[str]:
-        """Extract all legitimate keywords from Nana's experience"""
+        """Extract all legitimate keywords from user's experience"""
         keywords = set()
-        
+
         # Extract from experience bullets
-        for exp in self.nana_data.get('experience', []):
+        for exp in self.user_data.get('experience', []):
             for bullet in exp.get('bullets', []):
                 # Extract noun phrases and action verbs
                 words = bullet.lower().split()
                 keywords.update(words)
-        
+
         # Extract from skills
-        for skill in self.nana_data.get('skills', []):
+        for skill in self.user_data.get('skills', []):
             keywords.add(skill.lower())
         
         return keywords
@@ -143,8 +143,8 @@ class KeywordOptimizer:
     
     def match_keywords_to_experience(self, job_keywords: Dict) -> List[KeywordMatch]:
         """
-        Match job keywords to Nana's actual experience
-        CRITICAL: Only match what she actually has done
+        Match job keywords to user's actual experience
+        CRITICAL: Only match what they actually have done
         """
         matches = []
         
@@ -155,8 +155,8 @@ class KeywordOptimizer:
                 # Check if this is something Nana can't claim
                 if self._is_forbidden(keyword_lower):
                     continue
-                
-                # Try to find matches in Nana's experience
+
+                # Try to find matches in user's experience
                 match = self._find_experience_match(keyword_lower)
                 if match:
                     matches.append(match)
@@ -164,7 +164,7 @@ class KeywordOptimizer:
         return matches
     
     def _is_forbidden(self, keyword: str) -> bool:
-        """Check if keyword is something Nana cannot claim"""
+        """Check if keyword is something user cannot claim"""
         for category, forbidden_list in self.forbidden_keywords.items():
             for forbidden in forbidden_list:
                 if forbidden in keyword:
@@ -261,12 +261,11 @@ class KeywordOptimizer:
                 )
         
         # Add industry context if applicable (but only if true)
-        if 'healthcare' in keywords and 'Accenture' in original_bullet:
-            # This is TRUE - Nana worked with healthcare clients at Accenture
-            rewritten = rewritten.replace(
-                'Health and Public Service',
-                'Healthcare and Public Service sectors'
-            )
+        # Example: if 'healthcare' in keywords and 'Consulting' in original_bullet:
+        #     rewritten = rewritten.replace(
+        #         'Health and Public Service',
+        #         'Healthcare and Public Service sectors'
+        #     )
         
         return rewritten
     
@@ -340,9 +339,9 @@ class KeywordOptimizer:
 
 # Example usage
 if __name__ == "__main__":
-    # Load Nana's resume data
-    nana_resume = {
-        "full_name": "Ji Myung Nana Sheppard",
+    # Load sample resume data
+    sample_resume = {
+        "full_name": "Your Name",
         "skills": [
             "Project & Program Management",
             "Change Management", 
@@ -353,18 +352,18 @@ if __name__ == "__main__":
         ],
         "experience": [
             {
-                "company": "TBWA WH",
-                "title": "SVP, Director of Integrated Delivery",
+                "company": "Current Company",
+                "title": "Your Title",
                 "bullets": [
-                    "Build, grow, lead a department of 30 Project Managers across approx. 70 million dollar portfolio",
-                    "Oversee entire P&L across projects, resource allocations, scope change/creep",
-                    "Improve, modernize, and digitize production, work streams"
+                    "Lead department with significant portfolio",
+                    "Oversee P&L and resource management",
+                    "Drive modernization initiatives"
                 ]
             }
         ]
     }
-    
-    optimizer = KeywordOptimizer(nana_resume)
+
+    optimizer = KeywordOptimizer(sample_resume)
     
     # Example job text
     job_text = """

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Professional PDF Resume Generator for Nana's Resume Builder
+Professional PDF Resume Generator for Resume Retool
 Creates ATS-friendly, beautifully styled PDF resumes
 """
 
@@ -476,10 +476,10 @@ def create_professional_pdf(resume_text_or_data, output_path):
 
 # Example usage
 if __name__ == "__main__":
-    # Test with Nana's resume data
+    # Test with sample resume data
     sample_data = {
-        'full_name': 'Ji Myung Nana Sheppard',
-        'contact': '917.513.6060 | nobermann@gmail.com | New Jersey | LinkedIn',
+        'full_name': 'Your Name',
+        'contact': 'your.email@example.com | Your Location | LinkedIn',
         'title': 'Vice President Strategic Initiatives Candidate',
         'summary': 'Highly accomplished executive with 20+ years driving strategic initiatives and operational excellence in complex organizational environments. Proven track record of translating enterprise-wide strategies into actionable implementation plans, leading cross-functional teams, and delivering measurable business outcomes. Expert in change management, digital transformation, and scalable solution deployment.',
         'skills': [
@@ -539,6 +539,6 @@ if __name__ == "__main__":
     }
     
     # Generate PDF
-    output_file = 'nana_resume_professional.pdf'
+    output_file = 'sample_resume_professional.pdf'
     create_professional_pdf(sample_data, output_file)
     print(f"✅ Professional PDF resume generated: {output_file}")

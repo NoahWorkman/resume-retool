@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PDF Generator for Nana's Resume Builder
+PDF Generator for Resume Retool
 Creates professional PDF resumes from optimized text
 """
 
@@ -311,8 +311,8 @@ if __name__ == "__main__":
     
     # Test with sample data
     sample_resume = {
-        'full_name': 'Ji Myung Nana Sheppard',
-        'contact': '917.513.6060 | nobermann@gmail.com | New Jersey | LinkedIn',
+        'full_name': 'Your Name',
+        'contact': 'your.email@example.com | Your Location | LinkedIn',
         'title': 'Vice President Strategic Initiatives Candidate',
         'summary': 'Highly accomplished executive with 20+ years driving strategic initiatives and operational excellence.',
         'skills': [

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Nana's Resume Builder - Main Application
+Resume Retool - Main Application
 100% Factual Resume Customization with Keyword Optimization
 """
 
@@ -16,34 +16,34 @@ from keyword_optimizer import KeywordOptimizer
 from resume_builder import ResumeBuilder
 from pdf_generator_pro import create_professional_pdf
 
-class NanaResumeSystem:
+class ResumeRetoolSystem:
     """
     Complete resume customization system that:
     1. Accepts screenshots, URLs, or text
     2. Extracts job keywords
-    3. Matches to Nana's real experience
+    3. Matches to user's real experience
     4. Rewrites (never fabricates) to optimize keywords
     5. Outputs ATS-optimized resume
     """
-    
+
     def __init__(self):
-        # Load Nana's base resume data
-        self.nana_base_data = self._load_nana_data()
-        
+        # Load user's base resume data
+        self.user_base_data = self._load_user_data()
+
         # Initialize components
         self.extractor = JobPostingExtractor()
-        self.optimizer = KeywordOptimizer(self.nana_base_data)
+        self.optimizer = KeywordOptimizer(self.user_base_data)
         self.builder = ResumeBuilder()
-        self.builder.resume_data = self.nana_base_data
-        
-        print("🚀 Nana's Resume Builder initialized")
+        self.builder.resume_data = self.user_base_data
+
+        print("🚀 Resume Retool initialized")
         print("✅ 100% factual accuracy guaranteed")
-    
-    def _load_nana_data(self) -> dict:
-        """Load Nana's verified resume data"""
+
+    def _load_user_data(self) -> dict:
+        """Load user's verified resume data (replace with your own)"""
         return {
-            "full_name": "Ji Myung Nana Sheppard",
-            "contact": "917.513.6060 | nobermann@gmail.com | New Jersey | LinkedIn",
+            "full_name": "Your Name",
+            "contact": "your.email@example.com | Your Location | LinkedIn",
             "title": "SVP, Director Integrated Delivery | Best Practices & Change Agent | Operations Guru",
             "summary": "A highly accomplished, creative, and strategic Project Management & Business Operations Leader with 20+ years of extensive work experience",
             "skills": [
@@ -210,11 +210,11 @@ class NanaResumeSystem:
         company = extraction.get('company', 'Target Company')
         position = extraction.get('position', 'Target Position')
         
-        resume_text = f"{self.nana_base_data['full_name']}\n"
-        resume_text += f"{self.nana_base_data['contact']}\n\n"
-        
+        resume_text = f"{self.user_base_data['full_name']}\n"
+        resume_text += f"{self.user_base_data['contact']}\n\n"
+
         # Customized title line
-        resume_text += f"{position} Candidate | {self.nana_base_data['title']}\n\n"
+        resume_text += f"{position} Candidate | {self.user_base_data['title']}\n\n"
         
         # Professional summary optimized for keywords
         resume_text += "PROFESSIONAL SUMMARY\n"
@@ -246,14 +246,14 @@ class NanaResumeSystem:
         
         # Education
         resume_text += "EDUCATION\n"
-        for edu in self.nana_base_data['education']:
+        for edu in self.user_base_data['education']:
             resume_text += f"{edu['degree']} | {edu['school']}\n"
         
         return resume_text
     
     def _select_relevant_experiences(self, keyword_report: dict) -> list:
         """Select most relevant experiences based on job requirements"""
-        all_experiences = self.nana_base_data['experience']
+        all_experiences = self.user_base_data['experience']
         
         # Always include current role
         selected = [all_experiences[0]]  # TBWA
@@ -326,11 +326,11 @@ class NanaResumeSystem:
     def _reorder_skills(self, keyword_report: dict) -> list:
         """Reorder skills based on job requirements"""
         matched_keywords = {m['keyword'].lower() for m in keyword_report['matched_details']}
-        
+
         prioritized = []
         remaining = []
-        
-        for skill in self.nana_base_data['skills']:
+
+        for skill in self.user_base_data['skills']:
             skill_lower = skill.lower()
             if any(keyword in skill_lower for keyword in matched_keywords):
                 prioritized.append(skill)
@@ -401,7 +401,7 @@ class NanaResumeSystem:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Nana\'s Resume Builder - 100% Factual Keyword Optimization'
+        description='Resume Retool - 100% Factual Keyword Optimization'
     )
     parser.add_argument(
         'input',
@@ -414,9 +414,9 @@ def main():
     )
     
     args = parser.parse_args()
-    
+
     # Initialize system
-    system = NanaResumeSystem()
+    system = ResumeRetoolSystem()
     
     # Process job posting
     results = system.process_job_posting(args.input)
